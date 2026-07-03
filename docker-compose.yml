@@ -1,0 +1,63 @@
+
+services:
+  # ── KnowBase App ────────────────────────────────────────────────────────────
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: knowbase
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      # Set CLIENT_URL to your domain when running behind a reverse proxy
+      CLIENT_URL: "${CLIENT_URL:-http://localhost}"
+    volumes:
+      # Persistent database storage
+      - knowbase_data:/app/data
+      # Persistent file uploads (no size limit)
+      - knowbase_uploads:/app/uploads
+    ports:
+      # Expose directly on port 3001 if not using nginx
+      # Comment this out if using the nginx service below
+      - "${APP_PORT:-3001}:3001"
+    networks:
+      - knowbase_net
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3001/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  # ── Nginx Reverse Proxy (optional but recommended) ──────────────────────────
+  # Uncomment the nginx block below to run behind nginx on port 80/443
+  # and comment out the `ports` section on the app service above.
+  #
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: knowbase_nginx
+  #   restart: unless-stopped
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+  #     - ./nginx/ssl:/etc/nginx/ssl:ro          # mount your SSL certs here
+  #     - knowbase_uploads:/app/uploads:ro        # serve uploads directly
+  #   depends_on:
+  #     app:
+  #       condition: service_healthy
+  #   networks:
+  #     - knowbase_net
+
+volumes:
+  knowbase_data:
+    driver: local
+  knowbase_uploads:
+    driver: local
+
+networks:
+  knowbase_net:
+    driver: bridge

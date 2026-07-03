@@ -1,0 +1,31 @@
+{
+  "name": "knowbase",
+  "version": "1.0.0",
+  "description": "Personal Knowledge Base - Notion Alternative",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "concurrently \"nodemon server/index.js\" \"cd client && npm run dev\"",
+    "build": "cd client && npm run build",
+    "install:all": "npm install && cd client && npm install"
+  },
+  "dependencies": {
+    "archiver": "^7.0.1",
+    "better-sqlite3": "^9.4.3",
+    "cheerio": "^1.2.0",
+    "concurrently": "^8.2.2",
+    "cors": "^2.8.6",
+    "express": "^4.22.2",
+    "express-rate-limit": "^7.5.1",
+    "helmet": "^7.2.0",
+    "marked": "^12.0.2",
+    "mime-types": "^2.1.35",
+    "multer": "^1.4.5-lts.1",
+    "nodemon": "^3.1.14",
+    "sharp": "^0.33.3",
+    "slugify": "^1.6.9",
+    "sql.js": "^1.14.1",
+    "unzipper": "^0.12.5",
+    "uuid": "^9.0.1"
+  }
+}
